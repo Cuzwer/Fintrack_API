@@ -1,0 +1,6 @@
+CREATE TABLE users (
+  id_user       SERIAL PRIMARY KEY,
+  email_user    VARCHAR(100) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
