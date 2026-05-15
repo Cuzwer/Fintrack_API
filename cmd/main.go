@@ -20,7 +20,7 @@ func main () {
 	if db.Error != nil {fmt.Printf("Cant ConnectDB  %v", db.Error)}
 	
 	handler.CreateUsertable_Handler(db) 
-
+	handler.AccountTable_handler(db)
   app.Get("/api/hello", func (c *fiber.Ctx) error {
 		return c.Status(fiber.StatusAccepted).SendString("GoodBye")
 	})

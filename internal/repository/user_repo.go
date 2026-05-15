@@ -23,7 +23,7 @@ func CreateTableUser_Repo(db *gorm.DB) {
   checkTable := db.Migrator().HasTable(user)
   
 	if checkTable != false { 
-		fmt.Printf("user already created [ %v ] ",  checkTable)
+		fmt.Printf("user already created [ %v ] \n",  checkTable)
 		return
 	}
   
