@@ -22,6 +22,7 @@ func main () {
 	handler.CreateUsertable_Handler(db) 
 	handler.AccountTable_handler(db)
 	handler.CreateCategory_handler(db)
+	handler.CreateTransaction_handler(db)
 
   app.Get("/api/hello", func (c *fiber.Ctx) error {
 		return c.Status(fiber.StatusAccepted).SendString("GoodBye")
