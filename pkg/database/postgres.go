@@ -25,8 +25,7 @@ func ConnectDB(cfg *config.DBConfig) (*gorm.DB){
 	 if err != nil { 
 		log.Fatalf("fail to connect to database %v", err)
 	 }
-  
-	 fmt.Println("successfullty ConnectDB", db.Name())
-
+  	fmt.Printf("success fully ConnectDB %v", err)
+	
   return  db
 }
