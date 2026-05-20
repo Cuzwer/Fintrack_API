@@ -4,41 +4,40 @@ import (
 	"fmt"
 	_ "fmt"
 
-	_"github.com/cuzwer/fintrack/internal/handler"
+	_ "github.com/cuzwer/fintrack/internal/handler"
+	"github.com/cuzwer/fintrack/internal/routes"
 	"github.com/cuzwer/fintrack/pkg/config"
 	"github.com/cuzwer/fintrack/pkg/database"
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 )
 
-func main () { 
+func main() {
 
 	// section Prepare
 
 	app := fiber.New()
 	cfg := config.LoadConfig()
-	PORT := ":"+cfg.PORT
-  
+	PORT := ":" + cfg.PORT
+
 	db := database.ConnectDB(cfg)
-  
-	if db.Error != nil {fmt.Printf("Cant ConnectDB  %v", db.Error)}
-	
+
+	if db.Error != nil {
+		fmt.Printf("Cant ConnectDB  %v", db.Error)
+	}
+
 	dbURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
-  	cfg.DBUSER,
+		cfg.DBUSER,
 		cfg.DBPASSWORD,
 		cfg.DBHOST,
 		cfg.DBPORT,
 		cfg.DBNAME,
 		cfg.DBSSLMODE,
-)
-   database.RunDatabaseMigrations(dbURL)
+	)
+	database.RunDatabaseMigrations(dbURL)
 
-  // section API 
-
-	app.Get("/api/hello", func (c *fiber.Ctx) error {
-		return c.Status(fiber.StatusAccepted).SendString("GoodBye")
-	})
-
+	// section API
+	routes.SetUpRoutest(app, db)
 	fmt.Printf("Server is running on port %v 🙏💀", PORT)
 	app.Listen(PORT)
 }

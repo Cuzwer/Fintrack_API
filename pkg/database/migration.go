@@ -11,7 +11,7 @@ import (
 
 func RunDatabaseMigrations(dbURL string) { 
 
-  m , err := migrate.New("file://./migrations", dbURL)
+	m , err := migrate.New("file://./migrations",dbURL)
  	
 	if err != nil { 
 	 		log.Fatalf("\nFailed to create migrate instance : %v", err)
