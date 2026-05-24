@@ -5,6 +5,7 @@ import (
 	_ "fmt"
 
 	_ "github.com/cuzwer/fintrack/internal/handler"
+	"github.com/cuzwer/fintrack/internal/middleware"
 	"github.com/cuzwer/fintrack/internal/routes"
 	"github.com/cuzwer/fintrack/pkg/config"
 	"github.com/cuzwer/fintrack/pkg/database"
@@ -35,6 +36,8 @@ func main() {
 		cfg.DBSSLMODE,
 	)
 	database.RunDatabaseMigrations(dbURL)
+	// Middle ware
+	app.Use(middleware.NewCorsMiddleware())
 
 	// section API
 	routes.SetUpRoutest(app, db)

@@ -1,5 +1,7 @@
 package domain
 
+import "github.com/golang-jwt/jwt/v5"
+
 type User struct { 
 	ID int `gorm:"column:id_user;primaryKey;autoIncrement" json:"id_user"` 
 	EMAIL string `gorm:"column:email_user;uniqe;not null" json:"email"`
@@ -18,3 +20,9 @@ type User_Login struct {
 	PASSWORD string `gorm:"column:password_hash;not null" json:"password"`
 	JWT string `json:"jwt"`
 }
+
+type User_Claim struct { 
+	ID uint `json:"user_id"`
+	jwt.RegisteredClaims
+}
+

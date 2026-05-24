@@ -52,3 +52,19 @@ func LoginUser_Service(user *domain.User , db *gorm.DB) error {
 
 	return err
 }
+
+func DeleteUserById_service(user_id int, db *gorm.DB) error { 
+	
+	if repository.CheckUserByID_Repo(user_id,db) != true {
+		return 	fmt.Errorf("There's no this user id in the database ❌ \n");
+	}
+
+	err := repository.DeleteUserById_Repo(user_id , db)
+	if err != nil { 
+		return  err
+	}
+	
+	return err;
+}
+
+

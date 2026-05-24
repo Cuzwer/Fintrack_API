@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/cuzwer/fintrack/internal/domain"
@@ -76,7 +77,7 @@ func (h *UserHadler) LoginUser_handler() fiber.Handler {
 
 		jwt_Token := jwt.NewWithClaims(jwt.SigningMethodHS256  , jwt.MapClaims {
 			"user_id" : user.ID,
-			"exp" : time.Now().Add(time.Hour * 24).Unix(),
+			"exp" : jwt.NewNumericDate(time.Now().Add(time.Hour * 24 )),
 		})
 		tokenString , _ := jwt_Token.SignedString([]byte("SECRET_KEY"))
 	 
@@ -93,4 +94,24 @@ func (h *UserHadler) LoginUser_handler() fiber.Handler {
 			"status" : fiber.StatusAccepted,
 		})
 	}  
+}
+
+func (h *UserHadler) DeleteUser_handler() fiber.Handler { 
+	return  func(c *fiber.Ctx) error { 
+		user_id , err := strconv.Atoi(c.Params("id"));
+		
+		if err != nil { 
+			return c.Status(fiber.StatusBadRequest).SendString(err.Error())	
+		}
+  	
+		err = service.DeleteUserById_service(user_id, h.DB)
+		
+		if err != nil { 
+			return c.Status(fiber.StatusBadRequest).SendString(err.Error())	
+		}
+			
+		return  c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+			"message" : "Successfully Delete user",
+		})
+	}
 }
