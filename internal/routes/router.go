@@ -10,7 +10,8 @@ import (
 func SetUpRoutest(app *fiber.App , db *gorm.DB){
 
 	api := app.Group("/api/v1")
-	
 
 	SettupUserRoutes(api,db)
+	SettupAccount_Routes(api,db)
+	SettupCat_route(api, db)
 }

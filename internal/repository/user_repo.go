@@ -63,8 +63,7 @@ func DeleteUserById_Repo(user_id int, db *gorm.DB) error {
 	return  err
 }
 
-func CheckUserByID_Repo(id_user int , db *gorm.DB) bool { 
-  		
+func CheckUserByID_Repo(id_user int , db *gorm.DB) bool {  		
 	var result bool;
 	query := `
 SELECT CASE 

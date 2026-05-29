@@ -302,3 +302,5 @@ JWT_EXPIRE_HOURS=24
 ---
 
 ## 👤 Author
+
+``` Azfar Mamu```
