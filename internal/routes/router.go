@@ -14,4 +14,5 @@ func SetUpRoutest(app *fiber.App , db *gorm.DB){
 	SettupUserRoutes(api,db)
 	SettupAccount_Routes(api,db)
 	SettupCat_route(api, db)
+	SettupTransection_Routes(api , db)
 }

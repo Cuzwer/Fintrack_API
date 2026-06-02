@@ -9,7 +9,7 @@ import (
 
 func GetAll_AccountUser_Repo(id_user  int ,account_all *[]domain.Detail_Account, db *gorm.DB)	error { 
 	query := `
-	SELECT id_user , name , type_account , balance , currency FROM public.accounts
+	SELECT id_account ,id_user , name , type_account , balance , currency FROM public.accounts
 	WHERE id_user = ?;
 	`
 
@@ -37,4 +37,18 @@ func PostAccount_Repo (NewAccount *domain.Detail_Account , db *gorm.DB ) error {
 		return err
 	}
 	return  err
+}
+
+func CheckAccountByIduser_Repo (account *domain.AccountCheckUser , db *gorm.DB) (error,  bool){
+	var exists bool;
+
+	query := `
+	SELECT EXISTS(SELECT 1 FROM public.accounts WHERE id_account = ? AND  id_user = ?)
+	`
+	err := db.Raw(query, account.ID_Account , account.ID_User ).Scan(&exists).Error
+	
+	if err != nil { 
+		return err , exists
+	}
+	return err , exists
 }

@@ -32,3 +32,11 @@ func PostAccount_Service(Newaccount *domain.Detail_Account, db *gorm.DB) error {
 	
 	return err
 }
+
+func CheckAccountByuserID_Service(account *domain.AccountCheckUser ,  db *gorm.DB ) error {
+	err , exist :=	repository.CheckAccountByIduser_Repo(account , db)
+	if err != nil || exist != true { 
+		return fmt.Errorf("\n There's no account or user In account table \n")
+	}
+	return err
+}
