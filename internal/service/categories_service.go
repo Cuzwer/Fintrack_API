@@ -69,3 +69,18 @@ func UpdateCat_service(cat *domain.Categories , db *gorm.DB) error {
 	return  err;
 
 }
+
+
+func CheckCatByuserId_Service(userID int , idCat int  , db *gorm.DB ) error { 
+	if userID == 0 || idCat == 0  { 
+		return  fmt.Errorf("userID and id cat is zero");
+	}
+
+	err := repository.CheckCatByuserId_Repo(userID , idCat, db)
+
+	if err != nil { 
+		return  fmt.Errorf("userID and id category did not link to each other");
+	}
+
+	return nil;
+}

@@ -68,11 +68,26 @@ func UpdateCat_repo(cat *domain.Categories , db *gorm.DB ) error {
 	type_category = ?
 	WHERE id_user = ? AND id_category = ?;
 	`
-
 	err := db.Exec(query, cat.Name_Category , cat.Type_Category , cat.ID_User , cat.ID_Category).Error
+
  	if err != nil {
 
 		return  err
 	}
 	return  err
 } 
+
+func CheckCatByuserId_Repo(usrId int , CatId int , db *gorm.DB ) error { 
+	var result bool 
+
+	query := `
+	SELECT EXISTS(SELECT 1 FROM public.categories WHERE id_user = ? AND id_category = ?)
+	`
+	err := db.Raw(query ,usrId ,CatId).Scan(&result).Error
+
+	if err != nil || result != true { 
+		return err
+	}
+
+	return nil;
+}
