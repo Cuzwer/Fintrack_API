@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/cuzwer/fintrack/internal/domain"
+	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 )
 
@@ -51,4 +52,37 @@ func CheckAccountByIduser_Repo (account *domain.AccountCheckUser , db *gorm.DB) 
 		return err , exists
 	}
 	return err , exists
+}
+
+func CheckMoney_ByIDAccount_Repo(account_id *int , db *gorm.DB) decimal.Decimal { 
+	var balance decimal.Decimal;
+
+	query := `
+	SELECT 
+	balance
+	FROM public.accounts
+	WHERE id_account = ? 
+	`
+
+	if err := db.Raw(query ,  account_id).Scan(&balance) ; err != nil {
+		return  balance
+	}
+
+	return balance
+}
+
+func ChangeMoney_ByIdAccount_Repo(buffer *domain.Account , db *gorm.DB) error { 
+	
+	query := `
+	UPDATE public.accounts
+	SET balance = ? 
+	WHERE id_account = ? ;
+	`
+	
+	err := db.Exec(query ,  buffer.Balance ,  buffer.ID_Account).Error
+	
+	if err !=  nil { 
+		return err
+	}
+	return nil
 }

@@ -40,3 +40,14 @@ func CheckAccountByuserID_Service(account *domain.AccountCheckUser ,  db *gorm.D
 	}
 	return err
 }
+
+func ChangeMoneyByAcc_Service(buffer *domain.Account ,  db *gorm.DB) { 
+	 
+	err := repository.ChangeMoney_ByIdAccount_Repo(buffer , db);
+
+	if err != nil { 
+		 fmt.Printf("failed to update account properly");
+		 return
+	}
+  return
+}

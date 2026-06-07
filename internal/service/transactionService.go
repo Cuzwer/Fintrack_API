@@ -28,6 +28,25 @@ func PostTransaction(ID_User uint, newTran *domain.Transaction , db *gorm.DB ) e
 
 		return  fmt.Errorf("account verification failed: %w", err)
 	}
+	account_buffer := new(domain.Account);
+	account_buffer.ID_Account = newTran.ID_account
+
+	balance := repository.CheckMoney_ByIDAccount_Repo(&account_check.ID_Account ,( db))
+
+	if newTran.Type_trans == "expense" {
+
+		if newTran.Amount_trans.GreaterThan(balance) {
+				return fmt.Errorf("Transaction failed: balance is less than transaction amount")
+		} else { 
+			account_buffer.Balance = balance.Sub(newTran.Amount_trans);
+ 			ChangeMoneyByAcc_Service(account_buffer , db)
+		}
+	} else {
+		account_buffer.Balance = balance.Add(newTran.Amount_trans);
+		
+			ChangeMoneyByAcc_Service(account_buffer, db);
+	}
+
 	err := repository.PostTrans_Repo(newTran , db )
 	if err != nil {
 		return fmt.Errorf("\n Cant Post Transaction Some thing went wrong \n ")
