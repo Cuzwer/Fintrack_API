@@ -30,12 +30,12 @@ FinTrack API คือระบบ Backend API สำหรับจัดกา
 ## ✨ Features
 
 ### Core Features
-- ✅ User registration / login (JWT + HTTP Cookie)
-- ❌ Account management (บัญชีธนาคาร, เงินสด, บัตรเครดิต)
-- ❌ Income / Expense transaction
-- ❌ Category management
-- ❌ Monthly budget setting
-- ❌ Balance calculation
+-  ✅ Around MeUser registration / login (JWT + HTTP Cookie)
+-  ✅ Account management (บัญชีธนาคาร, เงินสด, บัตรเครดิต)
+-  ✅ Income / Expense transaction
+-  ✅ Category management
+-  ✅ Monthly budget setting
+-  ✅ Balance calculation
 
 ### Nice to Have
 - ⭐ Transaction summary report

@@ -22,8 +22,15 @@ func NewUserHandler(db *gorm.DB) *UserHadler{
 
 	return u
 }
-
-
+// GetallUser_handler
+// @Summary      Get all users
+// @Description  Retrieve a list of all users containing only their IDs and Emails for testing purposes.
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Success      200      {object}  map[string]interface{} "Success with user list"
+// @Failure      400      {string}  string                 "Bad Request"
+// @Router       /api/v1/user/ [get]
 func GetallUser_handler(db *gorm.DB) fiber.Handler{
 	return func(c *fiber.Ctx) error { 
    var user_object []domain.User_List
@@ -40,7 +47,16 @@ func GetallUser_handler(db *gorm.DB) fiber.Handler{
 	}
 }
 
-
+// RegisterUser_handler
+// @Summary      Register a new user
+// @Description  Create a new user account using an email and password.
+// @Tags         Authentication
+// @Accept       json
+// @Produce      json
+// @Param        request  body      domain.User             true  "Registration credentials"
+// @Success      202      {object}  map[string]interface{}  "Successfully Registered"
+// @Failure      400      {string}  string                  "Bad Request / Validation Error"
+// @Router       /api/v1/user/register [post]
 func (h *UserHadler) RegisterUser_handler()  fiber.Handler {
 	return  func (c *fiber.Ctx) error {
 		
@@ -63,6 +79,16 @@ func (h *UserHadler) RegisterUser_handler()  fiber.Handler {
 }
 }
 
+// LoginUser_handler
+// @Summary      User Login
+// @Description  Authenticate user with email and password, returning a HttpOnly JWT Token via Cookie.
+// @Tags         Authentication
+// @Accept       json
+// @Produce      json
+// @Param        request  body      domain.User_Login       true  "Login credentials"
+// @Success      202      {object}  map[string]interface{}  "Login Successful (Sets jwt_Token cookie)"
+// @Failure      400      {string}  string                  "Invalid credentials or bad payload"
+// @Router       /api/v1/user/login [post]
 func (h *UserHadler) LoginUser_handler() fiber.Handler { 
 	return func(c *fiber.Ctx) error { 
 		user := new(domain.User)
@@ -96,6 +122,16 @@ func (h *UserHadler) LoginUser_handler() fiber.Handler {
 	}  
 }
 
+// DeleteUser_handler
+// @Summary      Delete a user by ID
+// @Description  Remove a user account permanently from the database using their ID.
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Param        id       path      int                     true  "User ID to delete"
+// @Success      202      {object}  map[string]interface{}  "Successfully Deleted"
+// @Failure      400      {string}  string                  "Invalid ID or user not found"
+// @Router       /api/v1/user/{id} [delete]
 func (h *UserHadler) DeleteUser_handler() fiber.Handler { 
 	return  func(c *fiber.Ctx) error { 
 		user_id , err := strconv.Atoi(c.Params("id"));
