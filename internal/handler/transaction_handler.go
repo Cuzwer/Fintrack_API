@@ -26,26 +26,28 @@ func(h *TransHandler_obj) PostTrans_Handler() fiber.Handler{
 		newTrans := new(domain.Transaction)	
 			
 		if err := c.BodyParser(newTrans) ; err != nil { 
- 			return  c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message " : "Invalid Input for Post Transaction",
+  			return  c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "Invalid request body",
+				"error": err.Error(),
 			})
 		}
     val := c.Locals("userID")
 		usrID , ok := val.(uint)
 		if !ok {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "Invalid userID",
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message": "Invalid user ID",
 			})
 		}
 		err := service.PostTransaction( usrID ,  newTrans , h.DB );
 		if err != nil {
- 			return  c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"message" : "Something went wrong cannot post Transaction ",
+  			return  c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "Failed to create transaction",
+				"error": err.Error(),
 			})
 		}
     
-		return  c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-			"message" : "Successfully Post Transaction",
+		return  c.Status(fiber.StatusCreated).JSON(fiber.Map{
+			"message" : "Transaction created successfully",
 		})
 
 	}
@@ -60,20 +62,21 @@ func(h *TransHandler_obj) GetAllTrans_Handler() fiber.Handler{
 		usrID , ok := val.(uint)
 
 		if !ok {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "Invalid usrID ",
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message": "Invalid user ID",
 			})
 		}
- 		
+  	
 		err := service.GetTransaction_Service(int(usrID) , Trans , h.DB );
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"message" : "faild to Get Transaction",
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "Failed to retrieve transactions",
+				"error": err.Error(),
 			})
 		}
 		
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-			"message" : "Successfully Get Transaction",
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message" : "Transactions retrieved successfully",
 			"value" : Trans,
 		})
 	}

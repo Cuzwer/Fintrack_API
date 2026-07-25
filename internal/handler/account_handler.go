@@ -27,36 +27,48 @@ func (h *AccountDB_handler) GetAllAccount() fiber.Handler{
 		id_account,err := strconv.Atoi(c.Params("id"))
 		
 		if err != nil { 
-			return c.Status(fiber.StatusUnsupportedMediaType).SendString(err.Error())	}
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "Invalid account ID format",
+				"error": err.Error(),
+			})
+		}
 
 		err = service.GetAccountAll_Service(id_account, AllAccount , h.DB)
 		if err != nil { 
-			return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "Failed to retrieve accounts",
+				"error": err.Error(),
+			})
 		}
 		
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-			"message " : "success fully get Account",
-			"data " : AllAccount,
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message": "Accounts retrieved successfully",
+			"data": AllAccount,
 		})
 }
 }
-
 
 func (h *AccountDB_handler) PostAccount_Handler() fiber.Handler{
 	return func (c *fiber.Ctx ) error {
 		
 		var Newaccount = &domain.Detail_Account{}
 		if err := c.BodyParser(Newaccount) ; err != nil {
-			return  c.Status(fiber.StatusBadRequest).SendString(err.Error())
+			return  c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "Invalid request body",
+				"error": err.Error(),
+			})
 		}
 		err := service.PostAccount_Service(Newaccount,h.DB)
 
 		if err != nil { 
-			return  c.Status(fiber.StatusBadRequest).SendString(err.Error())
+			return  c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "Failed to create account",
+				"error": err.Error(),
+			})
 		}
 	
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-			"message" : fiber.StatusAccepted,
+		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+			"message" : "Account created successfully",
 		})
 	}
 }

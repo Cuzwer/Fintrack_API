@@ -28,8 +28,8 @@ func(h *CategoryOBG_handeler) GetCategory() fiber.Handler{
 		val  := c.Locals("userID")
 		userID , ok := val.(uint)
 		if !ok {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "User ID format is invalid ",
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message" : "Invalid user ID",
 			})	
 		}
 		var CategoriesOBJ []domain.Categories
@@ -39,12 +39,13 @@ func(h *CategoryOBG_handeler) GetCategory() fiber.Handler{
 
 		if err != nil { 
 				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "Something went wrong cannot Get Category ",
+				"message" : "Failed to retrieve categories",
+				"error": err.Error(),
 			})	
 		}
 
-		return  c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-			"status" : fiber.StatusAccepted,
+		return  c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message" : "Categories retrieved successfully",
 			"result" : cat,
 		})	
 	}
@@ -55,16 +56,16 @@ func(h* CategoryOBG_handeler) DeleteCat_handler() fiber.Handler {
 		val := c.Locals("userID")
 		userID , ok := val.(uint)
 		if !ok { 
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "User ID format invalid",
-				"userID" : userID,
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message" : "Invalid user ID",
 			})
 		}
     id_cat , err := strconv.Atoi(c.Params("id"))
 
 		if err != nil { 
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "Id catagory invalid",
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message" : "Invalid category ID format",
+				"error": err.Error(),
 			})
 		}
 
@@ -76,14 +77,14 @@ func(h* CategoryOBG_handeler) DeleteCat_handler() fiber.Handler {
 		err = service.DeleteCat_service(cat , h.DB )	
 		
 		if err != nil {
- 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-    		"message" : "failed to deleted category please try another id category",
+  			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+     		"message" : "Failed to delete category",
+				"error": err.Error(),
 			})
 		}
 		
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-			"message" : "OK",
-      "value" : cat,
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message" : "Category deleted successfully",
 		})
 	}
 }
@@ -94,9 +95,8 @@ func(h * CategoryOBG_handeler) PostCat_hanler() fiber.Handler {
 		userID , ok := val.(uint)
 
 		if !ok {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "userID Format invalid",
-				"userID" : userID,
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message" : "Invalid user ID",
 			})
 		}
 		var catPost domain.Cat_Action
@@ -104,22 +104,23 @@ func(h * CategoryOBG_handeler) PostCat_hanler() fiber.Handler {
 		err := c.BodyParser(cat)
 		
 		if err != nil { 
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "invalid format json",
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message" : "Invalid request body",
+				"error": err.Error(),
 			})
 		}
 		cat.ID_User = userID;
 
 		err = service.PostCat_service(cat ,h.DB)	
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"message" : "faild to create Categories Something went wrong",
-				"error" : err,
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message" : "Failed to create category",
+				"error": err.Error(),
 			})	
 		}
 		
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-			"message" : "Sucessfully for Post Categories",
+		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+			"message" : "Category created successfully",
 		})
 	}
 }
@@ -131,21 +132,27 @@ func (h *CategoryOBG_handeler) UpdateCat_handler() fiber.Handler {
 		userID , ok := val.(uint)
 		
 		if !ok {
-			return c.Status(fiber.StatusInternalServerError).SendString("invalid format user id")
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message": "Invalid user ID",
+			})
 		}
 	  
 		idCat , err := strconv.Atoi(c.Params("id"))
-   
+    
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).SendString("Invalid format Categories id ")
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "Invalid category ID format",
+				"error": err.Error(),
+			})
 		}
 
 		var cat_obj domain.Categories
 		cat := &cat_obj
 		
 		if err := c.BodyParser(cat) ; err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "Invalid Input format",
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "Invalid request body",
+				"error": err.Error(),
 			})
 		}
 
@@ -154,12 +161,12 @@ func (h *CategoryOBG_handeler) UpdateCat_handler() fiber.Handler {
 
 		if err := service.UpdateCat_service(cat , h.DB) ; err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "faild to updated category",
+				"message": "Failed to update category",
+				"error": err.Error(),
 			})
 		}
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-			"message" : "Sucessfully updated category",
-			"status code" : fiber.StatusAccepted,
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message": "Category updated successfully",
 		})
 	}
 }

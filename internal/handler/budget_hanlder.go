@@ -28,15 +28,16 @@ func(h *Budget_obj) PostBudget_Handler() fiber.Handler {
 		usrId , ok := val.(uint)
 
 		if !ok {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "Invalid format user id ",
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message" : "Invalid user ID",
 			})
 		}
 		var newBudget_obj domain.Budgets
 		newBudget := &newBudget_obj
 		if err := c.BodyParser(newBudget) ; err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "Invalid format Post Budgets",
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message" : "Invalid request body",
+				"error": err.Error(),
 			})
 		}
 		
@@ -45,14 +46,13 @@ func(h *Budget_obj) PostBudget_Handler() fiber.Handler {
 		err := service.PostBudget_service(newBudget,h.DB); 
 		if err != nil { 
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "failed to post budget" ,
-				"status"	: fiber.StatusInternalServerError,
+				"message" : "Failed to create budget" ,
+				"error": err.Error(),
 			})
 		}
 	
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-			"message" : "Successfully post budget",
-			"status" : fiber.StatusAccepted,
+		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+			"message" : "Budget created successfully",
 		})
 	}
 }
@@ -64,8 +64,8 @@ func(h *Budget_obj) GetBudget_Handler() fiber.Handler{
 		usrId , ok := val.(uint)
 
 		if !ok { 
-			c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "Invalid userID format",
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message" : "Invalid user ID",
 			})
 		}
 
@@ -74,12 +74,13 @@ func(h *Budget_obj) GetBudget_Handler() fiber.Handler{
 		err := service.GetBudget_Service(int(usrId) , allBudg , h.DB);
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "failed to get budget something went wrong",
+				"message" : "Failed to retrieve budgets",
+				"error": err.Error(),
 			})
 		}
 
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-			"message" : "Ok",
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message" : "Budgets retrieved successfully",
 			"result" : allBudg,
 		})
 	}
@@ -91,31 +92,33 @@ func(h *Budget_obj) UpdateBudget_Handler() fiber.Handler{
 		budg := &budg_obj
 
 		if err := c.BodyParser(budg) ; err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "Invalid Input",
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message" : "Invalid request body",
+				"error": err.Error(),
 			})	
 		}
   	
 		val := c.Locals("userID");
 		userID ,  ok := val.(uint);
 		if !ok {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "Invalid user id " ,
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message" : "Invalid user ID",
 			})
 		}
- 		
+  	
 		budg.ID_user = int(userID)
 		
 		err := service.UpdateBudg_Service(budg , h.DB)
 		
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "failed to Update something went wrong",
+				"message" : "Failed to update budget",
+				"error": err.Error(),
 			})
 		}
 		
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
-			"message" : "Successfully Update",
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message" : "Budget updated successfully",
 		})
 	}
 }
@@ -126,16 +129,17 @@ func(h *Budget_obj) DeleteBudget() fiber.Handler{
   	userID , ok := val.(uint);
 
 		if !ok {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "Invalid userID please login respectfully",
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message" : "Invalid user ID",
 			})
 		}
 
 		id_budget , err := strconv.Atoi(c.Params("id"));
 
 		if err != nil { 
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"message" : "Invalid Id Budget",
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message" : "Invalid budget ID format",
+				"error": err.Error(),
 			})
 		}
 		
@@ -147,12 +151,13 @@ func(h *Budget_obj) DeleteBudget() fiber.Handler{
 		
 		err =  service.DeleteBudge_Service(detail , h.DB);
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"message" : "failed to Deleted Budgets" ,
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message" : "Failed to delete budget" ,
+				"error": err.Error(),
 			})
 		}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message" : "Successfully Delete Budget",
+		"message" : "Budget deleted successfully",
 	})
 	}
 }
